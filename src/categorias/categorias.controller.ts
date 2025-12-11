@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
 import { Categoria } from './interface/categorias.interface';
 import { CategoriasService } from './categorias.service';
 import { Body, Param } from '@nestjs/common/decorators';
@@ -16,32 +16,37 @@ export class CategoriasController {
     return this.categoriasService.buscaTodasCategorias();
   }
 
-  @Get('/:id')
+  @Get('/:categoriaId')
   public async handleGetCategoriaById(
-    @Query('id') id: string,
+    @Param('categoriaId') categoriaId: string,
   ): Promise<Categoria> {
-    return this.categoriasService.buscaCategoriaPorId(id);
+    return this.categoriasService.buscaCategoriaPorId(categoriaId);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
   public async handleCreateCategoria(
     @Body() criarCategoria: CriarCategoriaDto,
-  ): Promise<Categoria> {
+  ): Promise<string> {
     return this.categoriasService.criarCategoria(criarCategoria);
   }
 
-  @Put('/:id')
+  @Put('/:categoriaId')
   public async handleUpdateCategoria(
-    @Param('id') id: string,
+    @Param('categoriaId') categoriaId: string,
     @Body() atualizarCategoria: AtualizarCategoriaDto,
   ): Promise<string> {
-    return this.categoriasService.atualizarCategoria(id, atualizarCategoria);
+    return this.categoriasService.atualizarCategoria(
+      categoriaId,
+      atualizarCategoria,
+    );
   }
 
-  @Delete('/:id')
-  public async handleDeleteCategoria(@Query('id') id: string): Promise<string> {
-    return this.categoriasService.deletarCategoria(id);
+  @Delete('/:categoriaId')
+  public async handleDeleteCategoria(
+    @Param('categoriaId') categoriaId: string,
+  ): Promise<string> {
+    return this.categoriasService.deletarCategoria(categoriaId);
   }
 
   @Post('/:categoriaId/jogadores/:jogadorId')

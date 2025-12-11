@@ -3,8 +3,8 @@ import { ArrayMinSize, IsOptional, IsString } from 'class-validator';
 export class AtualizarCategoriaDto {
   readonly categoria?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   descricao?: string;
 
   @IsOptional()

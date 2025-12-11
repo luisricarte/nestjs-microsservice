@@ -32,10 +32,10 @@ export class CategoriasService {
 
   public async criarCategoria(
     criarCategoria: CriarCategoriaDto,
-  ): Promise<Categoria> {
-    const categoriaCriada = await this.categoriaModel.create(criarCategoria);
-    await categoriaCriada.save();
-    return categoriaCriada;
+  ): Promise<string> {
+    await this.categoriaModel.create(criarCategoria);
+
+    return 'Categoria criada com sucesso';
   }
 
   public async atualizarCategoria(
@@ -80,7 +80,10 @@ export class CategoriasService {
       throw new Error('Jogador não encontrado');
     }
 
-    categoriaEncontrada.jogadores.push(jogadorEncontrado);
+    this.categoriaModel.findOneAndUpdate(
+      { _id: categoriaId },
+      { $addToSet: { jogadores: jogadorEncontrado._id } },
+    );
 
     await this.categoriaModel
       .findByIdAndUpdate(categoriaId, { $set: categoriaEncontrada })
