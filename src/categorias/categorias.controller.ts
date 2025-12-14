@@ -49,7 +49,7 @@ export class CategoriasController {
     return this.categoriasService.deletarCategoria(categoriaId);
   }
 
-  @Post('/:categoriaId/jogadores/:jogadorId')
+  @Put('/:categoriaId/jogadores/:jogadorId')
   public async handleAdicionarJogadorNaCategoria(
     @Param('categoriaId') categoriaId: string,
     @Param('jogadorId') jogadorId: string,

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Categoria } from './interface/categorias.interface';
 import { Model } from 'mongoose';
@@ -24,7 +28,7 @@ export class CategoriasService {
     const categoria = await this.categoriaModel.findOne({ _id }).exec();
 
     if (!categoria) {
-      throw new Error('Categoria não encontrada');
+      throw new NotFoundException('Categoria não encontrada');
     }
 
     return categoria;
@@ -33,6 +37,14 @@ export class CategoriasService {
   public async criarCategoria(
     criarCategoria: CriarCategoriaDto,
   ): Promise<string> {
+    const categoriaEncontrada = await this.categoriaModel
+      .findOne({ categoria: criarCategoria.categoria })
+      .exec();
+
+    if (categoriaEncontrada) {
+      throw new ConflictException('Categoria já cadastrada');
+    }
+
     await this.categoriaModel.create(criarCategoria);
 
     return 'Categoria criada com sucesso';
@@ -45,7 +57,7 @@ export class CategoriasService {
     const categoriaEncontrada = await this.categoriaModel.findById(id).exec();
 
     if (!categoriaEncontrada) {
-      throw new Error('Categoria não encontrada');
+      throw new NotFoundException('Categoria não encontrada');
     }
 
     await this.categoriaModel
@@ -54,10 +66,18 @@ export class CategoriasService {
     return `Categoria com id ${id} atualizada com sucesso!`;
   }
 
-  public async deletarCategoria(id: string) {
-    await this.categoriaModel.findByIdAndDelete(id).exec();
+  public async deletarCategoria(_id: string): Promise<string> {
+    const categoriaEncontrada = await this.categoriaModel
+      .findById({ _id })
+      .exec();
 
-    return `Categoria com id ${id} deletada com sucesso!`;
+    if (!categoriaEncontrada) {
+      throw new NotFoundException('Categoria não encontrada');
+    }
+
+    await this.categoriaModel.findByIdAndDelete({ _id }).exec();
+
+    return `Categoria com id ${_id} deletada com sucesso!`;
   }
 
   public async adicionarJogadorNaCategoria(
@@ -73,20 +93,28 @@ export class CategoriasService {
       .exec();
 
     if (!categoriaEncontrada) {
-      throw new Error('Categoria não encontrada');
+      throw new NotFoundException('Categoria não encontrada');
     }
 
     if (!jogadorEncontrado) {
-      throw new Error('Jogador não encontrado');
+      throw new NotFoundException('Jogador não encontrado');
     }
 
-    this.categoriaModel.findOneAndUpdate(
-      { _id: categoriaId },
-      { $addToSet: { jogadores: jogadorEncontrado._id } },
-    );
-
+    if (categoriaEncontrada.jogadores.includes(jogadorId as never)) {
+      throw new ConflictException(
+        'Jogador já cadastrado na categoria informada',
+      );
+    }
     await this.categoriaModel
-      .findByIdAndUpdate(categoriaId, { $set: categoriaEncontrada })
+      .findByIdAndUpdate(
+        categoriaId,
+        {
+          $push: { jogadores: jogadorEncontrado },
+        },
+        {
+          new: true,
+        },
+      )
       .exec();
 
     return 'Jogador adicionado na categoria com sucesso!';

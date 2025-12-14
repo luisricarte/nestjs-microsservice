@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { JogadoresModule } from './jogadores/jogadores.module';
-//import { JogadoresController } from './jogadores/jogadores.controller';
-//import { JogadoresService } from './jogadores/jogadores.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategoriasModule } from './categorias/categorias.module';
 import dotenv from 'dotenv';
