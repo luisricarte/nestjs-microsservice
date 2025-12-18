@@ -49,4 +49,18 @@ export class DesafiosService {
 
     return jogadoresEncontrados.every((jogador) => jogador !== null);
   }
+
+  public async deleteDesafio(_id: string) {
+    const desafioEncontrado = await this.desafiosModel.findById({ _id }).exec();
+
+    if (!desafioEncontrado) {
+      throw new NotFoundException(
+        `Desafio com id ${_id} não encontrado, não foi possível deletar`,
+      );
+    }
+
+    await this.desafiosModel.deleteOne({ _id }).exec();
+
+    return 'Desafio deletado com sucesso';
+  }
 }

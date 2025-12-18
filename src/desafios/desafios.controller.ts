@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   Param,
@@ -41,6 +42,13 @@ export class DesafiosController {
   ): Promise<string> {
     await this.desafioService.createDesafio(desafio);
     return 'Desafio criado com sucesso';
+  }
+
+  @Delete('/:desafioId')
+  public async deleteDesafio(
+    @Param('desafioId') desafioId: string,
+  ): Promise<Desafio | string> {
+    return await this.desafioService.deleteDesafio(desafioId);
   }
 
   /*@Put('/:id')
