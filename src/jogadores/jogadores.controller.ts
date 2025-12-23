@@ -10,7 +10,6 @@ import {
   NotFoundException,
   UsePipes,
   ValidationPipe,
-  Query,
 } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criarJogador.dto';
 import { JogadoresService } from './jogadores.service';
@@ -33,9 +32,7 @@ export class JogadoresController {
   ): Promise<string> {
     await this.jogadoresService.criarJogador(criarJogadorDto);
 
-    return JSON.stringify({
-      message: `Jogador com email ${criarJogadorDto.email} criado com sucesso`,
-    });
+    return 'Jogador Criado com sucesso';
   }
 
   @Get()
@@ -45,10 +42,10 @@ export class JogadoresController {
 
   @Get('/:id')
   async handleGetJogadorByid(
-    @Query('id', JogadoresValidacaoParametrosPipe) id: string,
+    @Param('id', JogadoresValidacaoParametrosPipe) id: string,
   ): Promise<Jogador | null> {
     return await this.jogadoresService
-      .consultarJogador(id)
+      .consultarJogadorById(id)
       .then((jogador) => jogador);
   }
 
@@ -66,7 +63,7 @@ export class JogadoresController {
 
     if (
       await this.jogadoresService
-        .consultarJogador(id)
+        .consultarJogadorById(id)
         .then((jogador) => !jogador)
     ) {
       throw new NotFoundException(`Jogador com id ${id} não encontrado`);
@@ -79,13 +76,13 @@ export class JogadoresController {
     });
   }
 
-  @Delete()
+  @Delete('/:id')
   async handleDeleteJogador(
-    @Query('id', JogadoresValidacaoParametrosPipe) id: string,
+    @Param('id', JogadoresValidacaoParametrosPipe) id: string,
   ): Promise<string> {
     if (
       await this.jogadoresService
-        .consultarJogador(id)
+        .consultarJogadorById(id)
         .then((jogador) => !jogador)
     ) {
       throw new NotFoundException(`Jogador com id ${id} não encontrado`);

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criarJogador.dto';
 import { Jogador } from './interface/jogador.interface';
 import { AtualizarJogadorDto } from './dtos/atualizarJogador.dto';
@@ -14,28 +18,36 @@ export class JogadoresService {
 
   public async criarJogador(criarJogadorDto: CriarJogadorDto): Promise<void> {
     const { nome, email, telefoneCelular } = criarJogadorDto;
-    const jogadorEncontrado = this.consultarJogador(email);
 
-    if (await jogadorEncontrado) {
-      throw new Error(`Jogador com email ${email} já cadastrado.`);
+    if (await this.consultarJogadorByEmail(email)) {
+      throw new ConflictException(`Jogador com email ${email} já cadastrado.`);
     }
 
-    await this.jogadorModel.create({
+    await new this.jogadorModel({
       nome,
       email,
       telefoneCelular,
       ranking: '',
       posicaoRanking: 0,
       urlFotoJogador: '',
-    });
+    }).save();
   }
 
   public consultarJogadores(): Promise<Jogador[]> {
     return this.jogadorModel.find().exec();
   }
 
-  public async consultarJogador(_id: string): Promise<Jogador | null> {
-    const jogadorEncontrado = await this.jogadorModel.findOne({ _id }).exec();
+  public async consultarJogadorByEmail(email: string): Promise<boolean> {
+    return !!(await this.jogadorModel.exists({ email }).exec());
+  }
+
+  public async consultarJogadorById(_id: string): Promise<Jogador> {
+    const jogadorEncontrado =
+      (await this.jogadorModel.findOne({ _id }).exec()) || null;
+
+    if (!jogadorEncontrado) {
+      throw new NotFoundException(`Jogador com id ${_id} não encontrado.`);
+    }
     return jogadorEncontrado;
   }
 
