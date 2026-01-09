@@ -40,7 +40,7 @@ export class DesafiosController {
   public async createDesafio(
     @Body() desafio: CriarDesafioDto,
   ): Promise<string> {
-    await this.desafioService.createDesafio(desafio);
+    await this.desafioService.createChallenge(desafio);
     return 'Desafio criado com sucesso';
   }
 

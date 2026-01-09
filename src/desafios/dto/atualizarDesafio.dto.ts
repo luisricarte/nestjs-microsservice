@@ -5,17 +5,18 @@ import {
   IsDateString,
   IsNotEmpty,
 } from 'class-validator';
+import * as jogadorInterface from 'src/jogadores/interface/jogador.interface';
 
-export class CriarDesafioDto {
+export class AtualizarDesafioDto {
   @IsNotEmpty()
   @IsDateString()
   dataHoraDesafio: Date;
 
   @IsNotEmpty()
-  solicitante: string;
+  solicitante: jogadorInterface.Jogador;
 
   @IsArray()
   @ArrayMinSize(2)
   @ArrayMaxSize(2)
-  jogadores: Array<string>;
+  jogadores: Array<jogadorInterface.Jogador>;
 }
