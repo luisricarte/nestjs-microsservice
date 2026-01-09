@@ -6,6 +6,7 @@ import { CriarDesafioDto } from './dto/criarDesafio.dto';
 import { Jogador } from 'src/jogadores/interface/jogador.interface';
 import { Categoria } from 'src/categorias/interface/categorias.interface';
 import { ObjectId } from 'mongodb';
+import { AtualizarDesafioDto } from './dto/atualizarDesafio.dto';
 
 @Injectable()
 export class DesafiosService {
@@ -123,5 +124,26 @@ export class DesafiosService {
     await this.desafiosModel.deleteOne({ _id }).exec();
 
     return 'Desafio deletado com sucesso';
+  }
+
+  public async updateDesafio(
+    _id: string,
+    desafioDto: AtualizarDesafioDto,
+  ): Promise<void> {
+    const challenge = await this.desafiosModel.findById(_id);
+
+    if (!challenge) {
+      throw new NotFoundException('Desafio não encontrado');
+    }
+
+    await this.desafiosModel.updateOne(
+      { _id },
+      {
+        $set: {
+          dataHoraDesafio: desafioDto.dataHoraDesafio,
+          status: desafioDto.status,
+        },
+      },
+    );
   }
 }

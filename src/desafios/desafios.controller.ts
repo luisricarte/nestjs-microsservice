@@ -6,13 +6,14 @@ import {
   Logger,
   Param,
   Post,
-  //Put,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { DesafiosService } from './desafios.service';
 import { Desafio } from './interface/desafios.interface';
 import { CriarDesafioDto } from './dto/criarDesafio.dto';
+import { AtualizarDesafioDto } from './dto/atualizarDesafio.dto';
 
 @Controller('/api/v1/desafios')
 export class DesafiosController {
@@ -51,8 +52,12 @@ export class DesafiosController {
     return await this.desafioService.deleteDesafio(desafioId);
   }
 
-  /*@Put('/:id')
-  public async updateDesafio(): Promise<string> {
-    return 'Desafio atualizado';
-  }*/
+  @Put('/:desafioId')
+  public async updateDesafio(
+    @Param('desafioId') id: string,
+    @Body() desafio: AtualizarDesafioDto,
+  ): Promise<string> {
+    await this.desafioService.updateDesafio(id, desafio);
+    return 'Desafio atualizado com sucesso';
+  }
 }
