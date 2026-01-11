@@ -112,16 +112,18 @@ export class DesafiosService {
     return players.some((player) => player.toString() === applicant.toString());
   }
 
-  public async deleteDesafio(_id: string) {
-    const desafioEncontrado = await this.desafiosModel.findById({ _id }).exec();
+  public async deleteChallenge(_id: string) {
+    const foundChallenge = await this.desafiosModel.findById({ _id }).exec();
 
-    if (!desafioEncontrado) {
+    if (!foundChallenge) {
       throw new NotFoundException(
         `Desafio com id ${_id} não encontrado, não foi possível deletar`,
       );
     }
-
-    await this.desafiosModel.deleteOne({ _id }).exec();
+    // ajustar para ser um atualizar para status cancelado g ii
+    await this.desafiosModel
+      .updateOne({ _id }, { $set: { status: 'CANCELADO' } })
+      .exec();
 
     return 'Desafio deletado com sucesso';
   }

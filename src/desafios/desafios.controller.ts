@@ -49,7 +49,7 @@ export class DesafiosController {
   public async deleteDesafio(
     @Param('desafioId') desafioId: string,
   ): Promise<Desafio | string> {
-    return await this.desafioService.deleteDesafio(desafioId);
+    return await this.desafioService.deleteChallenge(desafioId);
   }
 
   @Put('/:desafioId')
