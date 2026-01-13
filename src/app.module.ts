@@ -3,6 +3,7 @@ import { JogadoresModule } from './jogadores/jogadores.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategoriasModule } from './categorias/categorias.module';
 import { DesafiosModule } from './desafios/desafios.module';
+import { PartidasModule } from './partidas/partidas.module';
 import dotenv from 'dotenv';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -19,6 +20,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
     ),
     CategoriasModule,
     DesafiosModule,
+    PartidasModule,
   ],
 })
 export class AppModule {}

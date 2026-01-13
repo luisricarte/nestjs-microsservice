@@ -7,6 +7,7 @@ import { Jogador } from 'src/jogadores/interface/jogador.interface';
 import { Categoria } from 'src/categorias/interface/categorias.interface';
 import { ObjectId } from 'mongodb';
 import { AtualizarDesafioDto } from './dto/atualizarDesafio.dto';
+import { AtribuirPartidaDesafioDto } from 'src/partidas/interface/atribuirPartidaDesafio.dto';
 
 @Injectable()
 export class DesafiosService {
@@ -120,7 +121,6 @@ export class DesafiosService {
         `Desafio com id ${_id} não encontrado, não foi possível deletar`,
       );
     }
-    // ajustar para ser um atualizar para status cancelado g ii
     await this.desafiosModel
       .updateOne({ _id }, { $set: { status: 'CANCELADO' } })
       .exec();
@@ -147,5 +147,34 @@ export class DesafiosService {
         },
       },
     );
+  }
+
+  public async createMatch(
+    desafioId: string,
+    dadosDesafio: AtribuirPartidaDesafioDto,
+  ): Promise<void> {
+    const foundChallenge = await this.getDesafioById(desafioId);
+    const challenge = await this.desafiosModel.findById(desafioId).exec();
+
+    if (!foundChallenge) {
+      throw new NotFoundException(
+        'Dados do desafio não fornecidos ou desafio não encontrado',
+      );
+    }
+
+    if (!challenge) {
+      throw new NotFoundException('Desafio não encontrado');
+    }
+
+    await this.desafiosModel
+      .updateOne(
+        { _id: desafioId },
+        {
+          $set: {
+            partida: dadosDesafio,
+          },
+        },
+      )
+      .exec();
   }
 }

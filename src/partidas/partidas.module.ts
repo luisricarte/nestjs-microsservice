@@ -1,0 +1,10 @@
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { PartidaSchema } from './interface/partida.schema';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: 'Partida', schema: PartidaSchema }]),
+  ],
+})
+export class PartidasModule {}

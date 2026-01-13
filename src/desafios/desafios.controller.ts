@@ -14,6 +14,7 @@ import { DesafiosService } from './desafios.service';
 import { Desafio } from './interface/desafios.interface';
 import { CriarDesafioDto } from './dto/criarDesafio.dto';
 import { AtualizarDesafioDto } from './dto/atualizarDesafio.dto';
+import { AtribuirPartidaDesafioDto } from 'src/partidas/interface/atribuirPartidaDesafio.dto';
 
 @Controller('/api/v1/desafios')
 export class DesafiosController {
@@ -59,5 +60,15 @@ export class DesafiosController {
   ): Promise<string> {
     await this.desafioService.updateDesafio(id, desafio);
     return 'Desafio atualizado com sucesso';
+  }
+
+  @Put('/cadastra-partida/:desafioId')
+  public async handleCreateMatch(
+    @Param('desafioId') desafioId: string,
+    @Body() dadosDesafio: AtribuirPartidaDesafioDto,
+  ) {
+    await this.desafioService.createMatch(desafioId, dadosDesafio);
+
+    return 'Partida cadastrada no Desafio com sucesso!';
   }
 }
