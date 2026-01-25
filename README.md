@@ -55,3 +55,14 @@ Publish/Subscribe
   Request/Response
 - Requestor: componente que publica uma mensagem que pode ser registrada pelos outros componentes
 - Responder: componente que se increve em um topic e será tratado como incoming request
+
+# Arquitetura
+
+api-gateway: resposável por fazer o roteamento das requests, authentication, cache, throttling e rate limiting
+
+- RabbitMQ: broker
+- Single Process:
+  -> micro-admin-backend: categorias, jogadores
+  -> micro-desafios: desafios, partidas
+  -> micro-rankings: ranking
+  -> micro-notificacoes
