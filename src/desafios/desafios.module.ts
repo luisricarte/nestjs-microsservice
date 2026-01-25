@@ -6,6 +6,7 @@ import { DesafiosSchema } from './interface/desafios.schema';
 import { JogadorSchema } from 'src/jogadores/interface/jogador.schema';
 import { JogadoresModule } from 'src/jogadores/jogadores.module';
 import { CategoriaSchema } from 'src/categorias/interface/categoria.schema';
+import { PartidaSchema } from 'src/partidas/interface/partida.schema';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CategoriaSchema } from 'src/categorias/interface/categoria.schema';
       { name: 'Desafios', schema: DesafiosSchema },
       { name: 'Jogadores', schema: JogadorSchema },
       { name: 'Categorias', schema: CategoriaSchema },
+      { name: 'Partidas', schema: PartidaSchema },
     ]),
     JogadoresModule,
   ],

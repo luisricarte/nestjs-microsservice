@@ -8,6 +8,8 @@ import { Categoria } from 'src/categorias/interface/categorias.interface';
 import { ObjectId } from 'mongodb';
 import { AtualizarDesafioDto } from './dto/atualizarDesafio.dto';
 import { AtribuirPartidaDesafioDto } from 'src/partidas/interface/atribuirPartidaDesafio.dto';
+import { Partida } from 'src/partidas/interface/partida.interface';
+import { DesafioStatus } from './enum/desafioStatus.enum';
 
 @Injectable()
 export class DesafiosService {
@@ -18,6 +20,8 @@ export class DesafiosService {
     private readonly jogadorModel: Model<Jogador>,
     @InjectModel('Categorias')
     private readonly categoriaModel: Model<Categoria>,
+    @InjectModel('Partidas')
+    private readonly partidaModel: Model<Partida>,
   ) {}
 
   public async getDesafios() {
@@ -149,32 +153,42 @@ export class DesafiosService {
     );
   }
 
-  public async createMatch(
+  public async addChallengeToMatch(
     desafioId: string,
-    dadosDesafio: AtribuirPartidaDesafioDto,
-  ): Promise<void> {
-    const foundChallenge = await this.getDesafioById(desafioId);
-    const challenge = await this.desafiosModel.findById(desafioId).exec();
+    dadosPartida: AtribuirPartidaDesafioDto,
+  ): Promise<string> {
+    const challenge: Desafio | null = await this.desafiosModel
+      .findById(desafioId)
+      .exec();
 
-    if (!foundChallenge) {
+    if (!challenge) {
       throw new NotFoundException(
         'Dados do desafio não fornecidos ou desafio não encontrado',
       );
     }
 
-    if (!challenge) {
-      throw new NotFoundException('Desafio não encontrado');
-    }
+    const partidaCriada = new this.partidaModel(dadosPartida);
+
+    partidaCriada.categoria = challenge.categoria;
+    partidaCriada.jogadores = challenge.jogadores;
+
+    const resultado = await partidaCriada.save();
+
+    challenge.status = DesafioStatus.REALIZADO;
+
+    challenge.partida = resultado;
 
     await this.desafiosModel
-      .updateOne(
+      .findOneAndUpdate(
         { _id: desafioId },
         {
           $set: {
-            partida: dadosDesafio,
+            partida: challenge,
           },
         },
       )
       .exec();
+
+    return 'Desafio atualizado com a partida criada com sucesso';
   }
 }

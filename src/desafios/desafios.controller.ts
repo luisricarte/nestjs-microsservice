@@ -67,8 +67,9 @@ export class DesafiosController {
     @Param('desafioId') desafioId: string,
     @Body() dadosDesafio: AtribuirPartidaDesafioDto,
   ) {
-    await this.desafioService.createMatch(desafioId, dadosDesafio);
-
-    return 'Partida cadastrada no Desafio com sucesso!';
+    return await this.desafioService.addChallengeToMatch(
+      desafioId,
+      dadosDesafio,
+    );
   }
 }
