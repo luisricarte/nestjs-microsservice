@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Desafio } from './interface/desafios.interface';
 import { Model } from 'mongoose';
@@ -183,7 +184,12 @@ export class DesafiosService {
         { _id: desafioId },
         {
           $set: {
-            partida: challenge,
+            partida: {
+              _id: challenge.partida._id,
+              categoria: challenge.partida.categoria,
+              jogadores: challenge.partida.jogadores,
+            },
+            status: challenge.status,
           },
         },
       )
